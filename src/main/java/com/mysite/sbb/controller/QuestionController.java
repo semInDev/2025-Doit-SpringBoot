@@ -9,10 +9,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
+@RequestMapping ("/question")//ch02-11 URL prifix 알아두기
 @RequiredArgsConstructor
 @Controller
 public class QuestionController {
@@ -27,7 +29,7 @@ public class QuestionController {
     private final QuestionService questionService;
 
 
-    @GetMapping("/question/list")
+    @GetMapping("/list")
     public String list(Model model) {
 /*        //ch02-7 질문 목록 만들기 => question 테이블의 데이터를 조회하고 이를 템플릿에 전달하여 화면에 출력하기
         List<Question> questions = questionRepository.findAll();
@@ -40,7 +42,7 @@ public class QuestionController {
         return "question_list";
     }
 
-    @GetMapping("/question/detail/{id}")
+    @GetMapping("/detail/{id}")
     public String detail(Model model, @PathVariable("id") Integer id) {
         Question question = this.questionService.getQuestion(id);
         model.addAttribute("question", question);
