@@ -13,4 +13,11 @@ public class MainController {
     public String index(){
         return "안녕하세요 SBB에 오신 것을 환영합니다.";
     }
+
+    //루트 URL 만들기
+    @GetMapping("/")
+    public String root(){
+        return "redirect:/question/list";
+        //리다이렉트할 URL 입력(localhost:8080으로 접속하면 자동으로 /question/list으로 이동함)
+    }
 }
