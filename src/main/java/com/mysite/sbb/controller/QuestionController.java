@@ -1,16 +1,17 @@
 package com.mysite.sbb.controller;
 
 import com.mysite.sbb.domain.Question;
+import com.mysite.sbb.dto.AnswerForm;
+import com.mysite.sbb.dto.QuestionForm;
 import com.mysite.sbb.repository.QuestionRepository;
 import com.mysite.sbb.service.QuestionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -43,10 +44,34 @@ public class QuestionController {
     }
 
     @GetMapping("/detail/{id}")
-    public String detail(Model model, @PathVariable("id") Integer id) {
+    public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm) {
         Question question = this.questionService.getQuestion(id);
         model.addAttribute("question", question);
         return "question_detail";
     }
 
+    
+/*
+* question_form.html은 [질문 등록하기] 버튼을 통해
+* GET 방식으로 URL이 요청되더라도 th:object에 의해
+* QuestionForm 객체가 필요하기 때문이다.
+* */
+    @GetMapping("/create")
+/*
+    public String questionCreate() {
+*/
+    public String questionCreate(QuestionForm questionForm) {
+        return "question_form";
+    }
+
+    @PostMapping("/create")
+/*    public String questionCreate(@RequestParam(value = "subject") String subject,
+                                 @RequestParam(value = "content") String content) {*/
+    public String questionCreate(@Valid QuestionForm questionForm, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            return "question_form";
+        }
+        this.questionService.create(questionForm.getSubject(), questionForm.getContent());
+        return "redirect:/question/list";//질문 저장 후 질문 목록 페이지로 이동
+    }
 }
