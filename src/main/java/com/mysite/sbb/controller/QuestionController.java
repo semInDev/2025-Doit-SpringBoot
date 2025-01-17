@@ -8,6 +8,7 @@ import com.mysite.sbb.service.QuestionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -31,15 +32,17 @@ public class QuestionController {
 
 
     @GetMapping("/list")
-    public String list(Model model) {
+    public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page) {
 /*        //ch02-7 질문 목록 만들기 => question 테이블의 데이터를 조회하고 이를 템플릿에 전달하여 화면에 출력하기
         List<Question> questions = questionRepository.findAll();
         model.addAttribute("questionList", questions);
         return "question_list";*/
 
         //ch02-9 서비스 만들기: 컨트롤러 -> 서비스 -> 리포지토리 순으로 접근
-        List<Question> questions = this.questionService.getList();
-        model.addAttribute("questionList", questions);
+
+        //ch03-2 페이징
+        Page<Question> paging = this.questionService.getList(page);
+        model.addAttribute("paging", paging);
         return "question_list";
     }
 

@@ -4,6 +4,7 @@ import com.mysite.sbb.domain.Answer;
 import com.mysite.sbb.domain.Question;
 import com.mysite.sbb.repository.AnswerRepository;
 import com.mysite.sbb.repository.QuestionRepository;
+import com.mysite.sbb.service.QuestionService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,10 @@ class SbbApplicationTests {
 	@Autowired
 	private AnswerRepository answerRepository;
 
-	@Transactional
+	@Autowired
+	private QuestionService questionService;
+
+	//@Transactional
 	@Test
 	void testJpa(){
 		//1. testJpa로 데이터 만들어서 추가해보기(local server 끄고 실행)
@@ -99,7 +103,7 @@ class SbbApplicationTests {
 
 		//10. 답변 데이터 조회하기: 동일한 과정이라 생략
 
-		//11. 답변 데이터를 통해 질문 데이터 찾기 -> 지금까지 배운 걸로 해결 가능
+/*		//11. 답변 데이터를 통해 질문 데이터 찾기 -> 지금까지 배운 걸로 해결 가능
 		//질문 데이터를 통해 답변 데이터 찾기 -> 지금까지 배운 코드로는 에러 발생
 		//why? findById로 Question을 리턴 받으면 그 순간부터는 DB와의 연결이 끊어진 상태기때문에!!
 		// => 따라서, @Transactional(: 메서드가 종료될 때까지 DB와의 연결을 유지)을 사용해야 함!
@@ -110,8 +114,14 @@ class SbbApplicationTests {
 		List<Answer> answers = q.getAnswers();
 
 		assertEquals(1, answers.size());
-		assertEquals("네 자동으로 생성됩니다.", answers.get(0).getContent());
+		assertEquals("네 자동으로 생성됩니다.", answers.get(0).getContent());*/
 
+		//ch03-2 페이징 기능 추가하기: 대량 데이터 만들기
+		for (int i = 0; i <= 300; i++) {
+			String subject = String.format("테스트 데이터 입니다:[%03d]", i);
+			String content = "내용무";
+			this.questionService.create(subject, content);
+		}
 	}
 
 }
