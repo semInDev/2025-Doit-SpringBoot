@@ -117,6 +117,17 @@ public class QuestionController {
         this.questionService.modify(question, questionForm.getSubject(), questionForm.getContent());
         return String.format("redirect:/question/detail/%s", id);
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/delete/{id}")
+    public String questionDelete(@PathVariable("id") Integer id, Principal principal) {
+        Question question = this.questionService.getQuestion(id);
+        if(!question.getAuthor().getUsername().equals(principal.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
+        }
+        this.questionService.delete(question);
+        return "redirect:/";
+    }
 }
 /*
 * @PreAuthorize("isAuthenticated()") 애너테이션이 붙은 메서드는 로그인한 경우에만 실행된다.
