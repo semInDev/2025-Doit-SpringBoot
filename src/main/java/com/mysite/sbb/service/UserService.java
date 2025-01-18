@@ -1,6 +1,7 @@
 package com.mysite.sbb.service;
 
 import com.mysite.sbb.domain.SiteUser;
+import com.mysite.sbb.domain.constant.UserRole;
 import com.mysite.sbb.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +23,7 @@ public class UserService {
         siteUser.setPassword(passwordEncoder.encode(password));
         //siteUser.setPassword(password);
         this.userRepository.save(siteUser);
+
         return siteUser;
     }
 }
