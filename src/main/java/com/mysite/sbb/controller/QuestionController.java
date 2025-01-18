@@ -1,19 +1,23 @@
 package com.mysite.sbb.controller;
 
 import com.mysite.sbb.domain.Question;
+import com.mysite.sbb.domain.SiteUser;
 import com.mysite.sbb.dto.AnswerForm;
 import com.mysite.sbb.dto.QuestionForm;
 import com.mysite.sbb.repository.QuestionRepository;
 import com.mysite.sbb.service.QuestionService;
+import com.mysite.sbb.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RequestMapping ("/question")//ch02-11 URL prifix 알아두기
@@ -29,6 +33,7 @@ public class QuestionController {
     private QuestionRepository questionRepository;*/
 
     private final QuestionService questionService;
+    private final UserService userService;
 
 
     @GetMapping("/list")
@@ -59,6 +64,7 @@ public class QuestionController {
 * GET 방식으로 URL이 요청되더라도 th:object에 의해
 * QuestionForm 객체가 필요하기 때문이다.
 * */
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
 /*
     public String questionCreate() {
@@ -67,14 +73,21 @@ public class QuestionController {
         return "question_form";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
 /*    public String questionCreate(@RequestParam(value = "subject") String subject,
                                  @RequestParam(value = "content") String content) {*/
-    public String questionCreate(@Valid QuestionForm questionForm, BindingResult bindingResult) {
+    public String questionCreate(@Valid QuestionForm questionForm, BindingResult bindingResult,
+                                 Principal principal) {
         if(bindingResult.hasErrors()) {
             return "question_form";
         }
-        this.questionService.create(questionForm.getSubject(), questionForm.getContent());
+        SiteUser siteUser = this.userService.getUser(principal.getName());
+        this.questionService.create(questionForm.getSubject(), questionForm.getContent(),siteUser);
         return "redirect:/question/list";//질문 저장 후 질문 목록 페이지로 이동
     }
 }
+/*
+* @PreAuthorize("isAuthenticated()") 애너테이션이 붙은 메서드는 로그인한 경우에만 실행된다.
+* 즉, 이 애너테이션을 메서드에 붙이면 해당 메서드는 로그인한 사용자만 호출할 수 있다.
+ * */
