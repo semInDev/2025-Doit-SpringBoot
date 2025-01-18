@@ -39,7 +39,8 @@ public class QuestionController {
 
 
     @GetMapping("/list")
-    public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page) {
+    public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
+                       @RequestParam(value = "kw", defaultValue = "") String kw) {
 /*        //ch02-7 질문 목록 만들기 => question 테이블의 데이터를 조회하고 이를 템플릿에 전달하여 화면에 출력하기
         List<Question> questions = questionRepository.findAll();
         model.addAttribute("questionList", questions);
@@ -48,8 +49,9 @@ public class QuestionController {
         //ch02-9 서비스 만들기: 컨트롤러 -> 서비스 -> 리포지토리 순으로 접근
 
         //ch03-2 페이징
-        Page<Question> paging = this.questionService.getList(page);
+        Page<Question> paging = this.questionService.getList(page, kw);
         model.addAttribute("paging", paging);
+        model.addAttribute("kw", kw);
         return "question_list";
     }
 
